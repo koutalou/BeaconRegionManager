@@ -81,6 +81,27 @@
     [self startRegionMonitoring:region];
 }
 
+- (void)ceaseMonitoringBeaconRegionWithIdentifer:(NSString *)identifier
+{
+    for (CLRegion *monitorRegion in _locationManager.monitoredRegions) {
+        if (![monitorRegion isKindOfClass:[CLBeaconRegion class]] ) {
+            continue;
+        }
+        if ([identifier isEqualToString:monitorRegion.identifier]) {
+            [self stopRegionMonitoring:(CLBeaconRegion *)monitorRegion];
+        }
+    }
+    
+    for (CLRegion *monitorRegion in _regions) {
+        if (![monitorRegion isKindOfClass:[CLBeaconRegion class]] ) {
+            continue;
+        }
+        if ([identifier isEqualToString:monitorRegion.identifier]) {
+            [self stopRegionMonitoring:(CLBeaconRegion *)monitorRegion];
+        }
+    }
+}
+
 - (BOOL)isEqualBeaonRegion:(CLBeaconRegion *)beaconRegion targetRegion:(CLRegion *)region
 {
     if (![region isKindOfClass:[CLBeaconRegion class]] ) {
