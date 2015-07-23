@@ -10,6 +10,7 @@
 #ifndef _CBEACON_
 #define _CBEACON_
 
+#import "CRegionManager.h"
 #import "CBeaconReceiveManager.h"
 #import "CBeaconSendManager.h"
 

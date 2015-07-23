@@ -17,10 +17,11 @@
 - (void)startRegionMonitoring:(NSString *)identifier;
 - (void)stopRegionMonitoring:(NSString *)identifier;
 - (void)didRangeBeacons:(NSArray *)beacons identifier:(NSString *)identifier;
-- (void)didUpdateRegionEnterOrExit:(NSString *)identifier;
+- (void)didUpdateRegionEnter:(NSString *)identifier;
+- (void)didUpdateRegionExit:(NSString *)identifier;
 @end
 
-@interface CBeaconReceiveManager : NSObject <CBPeripheralManagerDelegate, CLLocationManagerDelegate>
+@interface CBeaconReceiveManager : NSObject <CIRegionBeaconDelegate>
 
 @property (nonatomic) BOOL allowRanging;
 @property (nonatomic, weak) id<CBeaconReceiveDelegate> delegate;
@@ -28,8 +29,8 @@
 + (CBeaconReceiveManager *)sharedManager;
 
 - (void)monitorBeaconRegionWithUuid:(NSString *)uuid identifier:(NSString *)identifier;
-- (void)monitorBeaconRegionWithUuid:(NSString *)uuid identifier:(NSString *)identifier major:(CLBeaconMajorValue)major;
-- (void)monitorBeaconRegionWithUuid:(NSString *)uuid identifier:(NSString *)identifier major:(CLBeaconMajorValue)major minor:(CLBeaconMajorValue)minor;
+- (void)monitorBeaconRegionWithUuid:(NSString *)uuid major:(CLBeaconMajorValue)major identifier:(NSString *)identifier;
+- (void)monitorBeaconRegionWithUuid:(NSString *)uuid major:(CLBeaconMajorValue)major minor:(CLBeaconMajorValue)minor identifier:(NSString *)identifier;
 - (void)ceaseMonitoringBeaconRegionWithIdentifer:(NSString *)identifier;
 
 @end

@@ -9,21 +9,8 @@
 #import "CBeacon.h"
 #import "CBeaconReceiveManager.h"
 
-@interface CBeaconRegion : CLBeaconRegion
-
-@property (nonatomic) BOOL isMonitoring;
-@property (nonatomic) BOOL entered;
-
-@end
-
-@implementation CBeaconRegion
-
-@end
-
 @interface CBeaconReceiveManager ()
-@property (nonatomic, strong) CBPeripheralManager *peripheralManager;
-@property (nonatomic, strong) CLLocationManager *locationManager;
-@property (nonatomic, strong) NSMutableArray *regions;
+@property (nonatomic, strong) CRegionManager *regionManager;
 
 @end
 
@@ -44,18 +31,8 @@
 - (id)init {
     self = [super init];
     if (self) {
-        _peripheralManager = [[CBPeripheralManager alloc] initWithDelegate:self queue:nil];
-        
-        _locationManager = [[CLLocationManager alloc] init];
-        _locationManager.delegate = self;
-        
-        self.allowRanging = YES;
-        _regions = [@[] mutableCopy];
-        
-        float iOSVersion = [[[UIDevice currentDevice] systemVersion] floatValue];
-        if (iOSVersion >= 8.0) {
-            [self.locationManager requestAlwaysAuthorization];
-        }
+        _regionManager = [CRegionManager sharedManager];
+        _regionManager.beaconReceviceDelegate = self;
     }
     return self;
 }
@@ -64,44 +41,32 @@
 {
     CBeaconRegion *region = [[CBeaconRegion alloc] initWithProximityUUID:[[NSUUID alloc] initWithUUIDString:uuid] identifier:identifier];
     
-    [self startRegionMonitoring:region];
+    [_regionManager startBeaconRegionMonitoring:region];
 }
 
-- (void)monitorBeaconRegionWithUuid:(NSString *)uuid identifier:(NSString *)identifier major:(CLBeaconMajorValue)major
+- (void)monitorBeaconRegionWithUuid:(NSString *)uuid major:(CLBeaconMajorValue)major identifier:(NSString *)identifier
 {
     CBeaconRegion *region = [[CBeaconRegion alloc] initWithProximityUUID:[[NSUUID alloc] initWithUUIDString:uuid] major:major identifier:identifier];
 
-    [self startRegionMonitoring:region];
+    [_regionManager startBeaconRegionMonitoring:region];
 }
 
-- (void)monitorBeaconRegionWithUuid:(NSString *)uuid identifier:(NSString *)identifier major:(CLBeaconMajorValue)major minor:(CLBeaconMajorValue)minor
+- (void)monitorBeaconRegionWithUuid:(NSString *)uuid major:(CLBeaconMajorValue)major minor:(CLBeaconMajorValue)minor identifier:(NSString *)identifier
 {
     CBeaconRegion *region = [[CBeaconRegion alloc] initWithProximityUUID:[[NSUUID alloc] initWithUUIDString:uuid] major:major minor:minor identifier:identifier];
 
-    [self startRegionMonitoring:region];
+    [_regionManager startBeaconRegionMonitoring:region];
 }
 
 - (void)ceaseMonitoringBeaconRegionWithIdentifer:(NSString *)identifier
 {
-    for (CLRegion *monitorRegion in _locationManager.monitoredRegions) {
-        if (![monitorRegion isKindOfClass:[CLBeaconRegion class]] ) {
-            continue;
-        }
-        if ([identifier isEqualToString:monitorRegion.identifier]) {
-            [self stopRegionMonitoring:(CLBeaconRegion *)monitorRegion];
-        }
-    }
-    
-    for (CLRegion *monitorRegion in _regions) {
-        if (![monitorRegion isKindOfClass:[CLBeaconRegion class]] ) {
-            continue;
-        }
-        if ([identifier isEqualToString:monitorRegion.identifier]) {
-            [self stopRegionMonitoring:(CLBeaconRegion *)monitorRegion];
-        }
+    CLRegion *region = [_regionManager getRegionWithIdentifier:identifier];
+    if ([region isKindOfClass:[CLBeaconRegion class]] || [region isKindOfClass:[CBeaconRegion class]]) {
+        [_regionManager stopRegionMonitoring:region];
     }
 }
 
+/*
 - (BOOL)isEqualBeaonRegion:(CLBeaconRegion *)beaconRegion targetRegion:(CLRegion *)region
 {
     if (![region isKindOfClass:[CLBeaconRegion class]] ) {
@@ -267,161 +232,68 @@
         [_delegate didUpdateRegionEnterOrExit:region.identifier];
     }
 }
+*/
 
-#pragma mark - CBPeripheralManagerDelegate
+#pragma mark - Override allowRanging
 
-- (NSString *)peripheralStateString:(CBPeripheralManagerState)state
+- (void)setAllowRanging:(BOOL)allowRanging
 {
-    switch (state) {
-        case CBPeripheralManagerStatePoweredOn:
-            return @"On";
-        case CBPeripheralManagerStatePoweredOff:
-            return @"Off";
-        case CBPeripheralManagerStateResetting:
-            return @"Resetting";
-        case CBPeripheralManagerStateUnauthorized:
-            return @"Unauthorized";
-        case CBPeripheralManagerStateUnknown:
-            return @"Unknown";
-        case CBPeripheralManagerStateUnsupported:
-            return @"Unsupported";
-    }
+    _regionManager.allowRanging = allowRanging;
 }
 
-- (void)peripheralManagerDidUpdateState:(CBPeripheralManager *)peripheral
+- (BOOL)allowRanging
 {
-    CBDLog(@"Peripheral state %@", [self peripheralStateString:peripheral.state]);
-    
-    [self checkMonitoringRegion];
-    
+    return _regionManager.allowRanging;
+}
+
+#pragma mark CIRegionBeaconDelegate
+
+- (void)didUpdatePeripheralState:(CBPeripheralManagerState)state
+{
     if ([_delegate respondsToSelector:@selector(didUpdatePeripheralState:)]) {
-        [_delegate didUpdatePeripheralState:peripheral.state];
+        [_delegate didUpdatePeripheralState:state];
     }
 }
 
-#pragma mark CLLocationManagerDelegate - Authorization
-- (NSString *)locationAuthorizationStatusString:(CLAuthorizationStatus)status
+- (void)didUpdateAuthorizationStatus:(CLAuthorizationStatus)status
 {
-    switch (status) {
-        case kCLAuthorizationStatusNotDetermined:
-            return @"Not determined";
-        case kCLAuthorizationStatusRestricted:
-            return @"Restricted";
-        case kCLAuthorizationStatusDenied:
-            return @"Denied";
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 80000
-        case kCLAuthorizationStatusAuthorizedAlways:
-            return @"Authorized always";
-        case kCLAuthorizationStatusAuthorizedWhenInUse:
-            return @"Authorized when in use";
-#else
-        case kCLAuthorizationStatusAuthorized:
-            return @"Authorized";
-#endif
-    }
-    return @"";
-}
-
-- (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status
-{
-    CBDLog(@"Status %@", [self locationAuthorizationStatusString:status]);
-    
-    [self checkMonitoringRegion];
-    
     if ([_delegate respondsToSelector:@selector(didUpdateAuthorizationStatus:)]) {
         [_delegate didUpdateAuthorizationStatus:status];
     }
 }
 
-#pragma mark CLLocationManagerDelegate - Region
-
-- (void)locationManager:(CLLocationManager *)manager didStartMonitoringForRegion:(CLRegion *)region
+- (void)startRegionMonitoring:(NSString *)identifier
 {
-    CBDLog(@"Identifier %@", region.identifier);
-    
-    [self.locationManager requestStateForRegion:region];
-}
-
-- (void)locationManager:(CLLocationManager *)manager didEnterRegion:(CLRegion *)region
-{
-    if ([region isKindOfClass:[CLBeaconRegion class]]) {
-        [self enterRegion:(CLBeaconRegion *)region];
+    if ([_delegate respondsToSelector:@selector(startRegionMonitoring:)]) {
+        [_delegate startRegionMonitoring:identifier];
     }
 }
 
-- (void)locationManager:(CLLocationManager *)manager didExitRegion:(CLRegion *)region
+- (void)stopRegionMonitoring:(NSString *)identifier
 {
-    if ([region isKindOfClass:[CLBeaconRegion class]]) {
-        [self exitRegion:(CLBeaconRegion *)region];
+    if ([_delegate respondsToSelector:@selector(stopRegionMonitoring:)]) {
+        [_delegate stopRegionMonitoring:identifier];
     }
 }
 
-- (NSString *)regionStateString:(CLRegionState)state
+- (void)didRangeBeacons:(NSArray *)beacons identifier:(NSString *)identifier
 {
-    switch (state) {
-        case CLRegionStateInside:
-            return @"Inside";
-        case CLRegionStateOutside:
-            return @"Outside";
-        default: CLRegionStateUnknown:
-            return @"Unknown";
-    }
-}
-
-- (void)locationManager:(CLLocationManager *)manager didDetermineState:(CLRegionState)state forRegion:(CLRegion *)region
-{
-    CBDLog(@"Region %@, Identifier: %@", [self regionStateString:state], region.identifier);
-    
-    if ([self isMonitoringBeaconRegion:region]) {
-        switch (state) {
-            case CLRegionStateInside:
-                [self enterRegion:(CLBeaconRegion *)region];
-                break;
-            case CLRegionStateOutside:
-            case CLRegionStateUnknown:
-                [self exitRegion:(CLBeaconRegion *)region];
-                break;
-            default:
-                break;
-        }
-    }
-}
-
-- (void)locationManager:(CLLocationManager *)manager monitoringDidFailForRegion:(CLRegion *)region withError:(NSError *)error
-{
-    CBDLog(@"Identifier %@, Error %@", region.identifier, error);
-    
-    if (![self isMonitoringBeaconRegion:region]) {
-        return;
-    }
-    
-    [self stopRegionMonitoring:(CLBeaconRegion *)region];
-}
-
-#pragma mark - CLLocationManagerDelegate - Ranging
-
-- (void)locationManager:(CLLocationManager *)manager didRangeBeacons:(NSArray *)beacons inRegion:(CLBeaconRegion *)region
-{
-    CBDLog(@"Identifier %@", region.identifier);
-    
-    if (![self isMonitoringBeaconRegion:region]) {
-        return;
-    }
-    
-    
-    NSString *identifier = region.identifier;
-    
     if ([_delegate respondsToSelector:@selector(didRangeBeacons:identifier:)]) {
         [_delegate didRangeBeacons:beacons identifier:identifier];
     }
 }
 
-- (void)locationManager:(CLLocationManager *)manager rangingBeaconsDidFailForRegion:(CLBeaconRegion *)region withError:(NSError *)error
+- (void)didUpdateRegionEnter:(NSString *)identifier
 {
-    CBDLog(@"Identifier %@, Error %@", region.identifier, error);
-    
-    if (![self isMonitoringBeaconRegion:region]) {
-        return;
+    if ([_delegate respondsToSelector:@selector(didUpdateRegionEnter:)]) {
+        [_delegate didUpdateRegionEnter:identifier];
+    }
+}
+
+- (void)didUpdateRegionExit:(NSString *)identifier
+{
+    if ([_delegate respondsToSelector:@selector(didUpdateRegionExit:)]) {
+        [_delegate didUpdateRegionExit:identifier];
     }
 }
 
