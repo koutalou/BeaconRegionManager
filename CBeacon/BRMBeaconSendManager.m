@@ -6,24 +6,24 @@
 //
 //
 
-#import "CBeacon.h"
-#import "CBeaconSendManager.h"
+#import "BRMBeacon.h"
+#import "BRMBeaconSendManager.h"
 
-@interface CBeaconSendManager ()
+@interface BRMBeaconSendManager ()
 @property (nonatomic, strong) CBPeripheralManager *peripheralManager;
 @property (nonatomic, strong) CLBeaconRegion *beaconSendRegion;
 
 @end
 
-@implementation CBeaconSendManager
+@implementation BRMBeaconSendManager
 
-+ (CBeaconSendManager *)sharedManager
++ (BRMBeaconSendManager *)sharedManager
 {
-    static CBeaconSendManager *sharedSingleton;
+    static BRMBeaconSendManager *sharedSingleton;
     static dispatch_once_t oncePredicate;
     
     dispatch_once(&oncePredicate, ^{
-        sharedSingleton = [[CBeaconSendManager alloc] init];
+        sharedSingleton = [[BRMBeaconSendManager alloc] init];
     });
     
     return sharedSingleton;
@@ -71,7 +71,7 @@
         case CBPeripheralManagerStateUnauthorized:
         case CBPeripheralManagerStateUnsupported:
         case CBPeripheralManagerStateUnknown:
-            CBDLog(@"Not Ready: Peripheral State %ld", peripheral.state);
+            BRMDLog(@"Not Ready: Peripheral State %ld", peripheral.state);
             break;
         default:
             break;

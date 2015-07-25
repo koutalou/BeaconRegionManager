@@ -6,23 +6,23 @@
 //  Copyright (c) 2015年 KotaroKodama. All rights reserved.
 //
 
-#import "CBeacon.h"
-#import "CLocationReceiveManager.h"
+#import "BRMBeacon.h"
+#import "BRMLocationReceiveManager.h"
 
-@interface CLocationReceiveManager ()
-@property (nonatomic, strong) CRegionManager *regionManager;
+@interface BRMLocationReceiveManager ()
+@property (nonatomic, strong) BRMRegionManager *regionManager;
 
 @end
 
-@implementation CLocationReceiveManager
+@implementation BRMLocationReceiveManager
 
-+ (CLocationReceiveManager *)sharedManager
++ (BRMLocationReceiveManager *)sharedManager
 {
-    static CLocationReceiveManager *sharedSingleton;
+    static BRMLocationReceiveManager *sharedSingleton;
     static dispatch_once_t oncePredicate;
     
     dispatch_once(&oncePredicate, ^{
-        sharedSingleton = [[CLocationReceiveManager alloc] init];
+        sharedSingleton = [[BRMLocationReceiveManager alloc] init];
     });
     
     return sharedSingleton;
@@ -31,7 +31,7 @@
 - (id)init {
     self = [super init];
     if (self) {
-        _regionManager = [CRegionManager sharedManager];
+        _regionManager = [BRMRegionManager sharedManager];
         _regionManager.locationReceviceDelegate = self;
     }
     return self;
@@ -43,14 +43,14 @@
     coordinate.latitude = latitude;
     coordinate.longitude = longitude;
     
-    CLocationRegion *region = [[CLocationRegion alloc] initWithCenter:coordinate radius:distance identifier:identifier];
+    BRMLocationRegion *region = [[BRMLocationRegion alloc] initWithCenter:coordinate radius:distance identifier:identifier];
     [_regionManager startLocationRegionMonitoring:region];
 }
 
 - (void)ceaseMonitoringLocationRegionWithIdentifer:(NSString *)identifier
 {
     CLRegion *region = [_regionManager getRegionWithIdentifier:identifier];
-    if ([region isKindOfClass:[CLCircularRegion class]] || [region isKindOfClass:[CLocationRegion class]]) {
+    if ([region isKindOfClass:[CLCircularRegion class]] || [region isKindOfClass:[BRMLocationRegion class]]) {
         [_regionManager stopRegionMonitoring:region];
     }
 }

@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <CoreLocation/CoreLocation.h>
 
-@protocol CLocationReceiveDelegate <NSObject>
+@protocol BRMLocationReceiveDelegate <NSObject>
 @optional
 - (void)didUpdatePeripheralState:(CBPeripheralManagerState)state;
 - (void)didUpdateAuthorizationStatus:(CLAuthorizationStatus)status;
@@ -19,11 +19,11 @@
 - (void)didUpdateRegionExit:(NSString *)identifier;
 @end
 
-@interface CLocationReceiveManager : NSObject <CIRegionLocationDelegate>
+@interface BRMLocationReceiveManager : NSObject <IBRMRegionLocationDelegate>
 
-+ (CLocationReceiveManager *)sharedManager;
++ (BRMLocationReceiveManager *)sharedManager;
 - (void)monitorLocationRegionWithLatitude:(double)latitude longitude:(double)longitude distance:(NSInteger)distance identifier:(NSString *)identifier;
 
-@property (nonatomic, weak) id<CLocationReceiveDelegate> delegate;
+@property (nonatomic, weak) id<BRMLocationReceiveDelegate> delegate;
 
 @end

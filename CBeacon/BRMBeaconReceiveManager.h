@@ -10,7 +10,7 @@
 #import <CoreLocation/CoreLocation.h>
 #import <CoreBluetooth/CoreBluetooth.h>
 
-@protocol CBeaconReceiveDelegate <NSObject>
+@protocol BRMBeaconReceiveDelegate <NSObject>
 @optional
 - (void)didUpdatePeripheralState:(CBPeripheralManagerState)state;
 - (void)didUpdateAuthorizationStatus:(CLAuthorizationStatus)status;
@@ -21,12 +21,12 @@
 - (void)didUpdateRegionExit:(NSString *)identifier;
 @end
 
-@interface CBeaconReceiveManager : NSObject <CIRegionBeaconDelegate>
+@interface BRMBeaconReceiveManager : NSObject <IBRMRegionBeaconDelegate>
 
 @property (nonatomic) BOOL allowRanging;
-@property (nonatomic, weak) id<CBeaconReceiveDelegate> delegate;
+@property (nonatomic, weak) id<BRMBeaconReceiveDelegate> delegate;
 
-+ (CBeaconReceiveManager *)sharedManager;
++ (BRMBeaconReceiveManager *)sharedManager;
 
 - (void)monitorBeaconRegionWithUuid:(NSString *)uuid identifier:(NSString *)identifier;
 - (void)monitorBeaconRegionWithUuid:(NSString *)uuid major:(CLBeaconMajorValue)major identifier:(NSString *)identifier;

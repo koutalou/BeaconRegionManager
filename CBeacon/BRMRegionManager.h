@@ -10,14 +10,14 @@
 #import <CoreLocation/CoreLocation.h>
 #import <CoreBluetooth/CoreBluetooth.h>
 
-@interface CBeaconRegion : CLBeaconRegion
+@interface BRMBeaconRegion : CLBeaconRegion
 
 @property (nonatomic) BOOL isMonitoring;
 @property (nonatomic) BOOL entered;
 
 @end
 
-@interface CLocationRegion : CLCircularRegion
+@interface BRMLocationRegion : CLCircularRegion
 
 @property (nonatomic) BOOL isMonitoring;
 @property (nonatomic) BOOL entered;
@@ -25,7 +25,7 @@
 @end
 
 
-@protocol CIRegionBeaconDelegate <NSObject>
+@protocol IBRMRegionBeaconDelegate <NSObject>
 - (void)didUpdatePeripheralState:(CBPeripheralManagerState)state;
 - (void)didUpdateAuthorizationStatus:(CLAuthorizationStatus)status;
 - (void)startRegionMonitoring:(NSString *)identifier;
@@ -35,7 +35,7 @@
 - (void)didUpdateRegionExit:(NSString *)identifier;
 @end
 
-@protocol CIRegionLocationDelegate <NSObject>
+@protocol IBRMRegionLocationDelegate <NSObject>
 - (void)didUpdatePeripheralState:(CBPeripheralManagerState)state;
 - (void)didUpdateAuthorizationStatus:(CLAuthorizationStatus)status;
 - (void)startRegionMonitoring:(NSString *)identifier;
@@ -44,18 +44,18 @@
 - (void)didUpdateRegionExit:(NSString *)identifier;
 @end
 
-@interface CRegionManager : NSObject <CBPeripheralManagerDelegate, CLLocationManagerDelegate>
+@interface BRMRegionManager : NSObject <CBPeripheralManagerDelegate, CLLocationManagerDelegate>
 
-+ (CRegionManager *)sharedManager;
++ (BRMRegionManager *)sharedManager;
 
-- (void)startBeaconRegionMonitoring:(CBeaconRegion *)beaconRegion;
-- (void)startLocationRegionMonitoring:(CLocationRegion *)circularRegion;
+- (void)startBeaconRegionMonitoring:(BRMBeaconRegion *)beaconRegion;
+- (void)startLocationRegionMonitoring:(BRMLocationRegion *)circularRegion;
 - (void)stopRegionMonitoring:(CLRegion *)region;
 
 - (CLRegion *)getRegionWithIdentifier:(NSString *)identifier;
 
-@property (nonatomic, weak) id<CIRegionBeaconDelegate> beaconReceviceDelegate;
-@property (nonatomic, weak) id<CIRegionLocationDelegate> locationReceviceDelegate;
+@property (nonatomic, weak) id<IBRMRegionBeaconDelegate> beaconReceviceDelegate;
+@property (nonatomic, weak) id<IBRMRegionLocationDelegate> locationReceviceDelegate;
 @property (nonatomic) BOOL allowRanging;
 
 @end

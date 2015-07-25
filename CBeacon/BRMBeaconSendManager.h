@@ -10,9 +10,9 @@
 #import <CoreLocation/CoreLocation.h>
 #import <CoreBluetooth/CoreBluetooth.h>
 
-@interface CBeaconSendManager : NSObject <CBPeripheralManagerDelegate>
+@interface BRMBeaconSendManager : NSObject <CBPeripheralManagerDelegate>
 
-+ (CBeaconSendManager *)sharedManager;
++ (BRMBeaconSendManager *)sharedManager;
 
 - (void)startBeaconWithUUID:(NSString *)uuid identifier:(NSString *)identifier major:(int)major minor:(int)minor second:(int)second;
 
