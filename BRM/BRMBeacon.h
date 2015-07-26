@@ -5,6 +5,7 @@
 //  Copyright (c) 2015年 KotaroKodama. All rights reserved.
 //
 
+#import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
 
 #ifndef _BRMBEACON_

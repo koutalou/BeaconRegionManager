@@ -33,4 +33,6 @@
 - (void)monitorBeaconRegionWithUuid:(NSString *)uuid major:(CLBeaconMajorValue)major minor:(CLBeaconMajorValue)minor identifier:(NSString *)identifier;
 - (void)ceaseMonitoringBeaconRegionWithIdentifer:(NSString *)identifier;
 
+- (NSArray *)monitoringBeaconRegions;
+
 @end

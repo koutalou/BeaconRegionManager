@@ -46,6 +46,8 @@
         self.allowRanging = YES;
         _regions = [@[] mutableCopy];
         
+        [self initMonitoringRegions];
+        
         float iOSVersion = [[[UIDevice currentDevice] systemVersion] floatValue];
         if (iOSVersion >= 8.0) {
             [self.locationManager requestAlwaysAuthorization];
@@ -58,17 +60,12 @@
 
 - (void)startBeaconRegionMonitoring:(BRMBeaconRegion *)beaconRegion
 {
-    BRMBeaconRegion *sameRegion = (BRMBeaconRegion *)[self getMonitoringBeaconRegion:beaconRegion];
-    if (!sameRegion) {
+    BRMBeaconRegion *sameBeaconRegion = [self getMonitoringBeaconRegion:beaconRegion];
+    if (!sameBeaconRegion) {
         [_regions addObject:beaconRegion];
     }
     
-    if (sameRegion && ![sameRegion isKindOfClass:[BRMBeaconRegion class]]) {
-        return;
-    }
-    
-    BRMBeaconRegion *sameCBeaconRegion = (BRMBeaconRegion *)sameRegion;
-    if (sameCBeaconRegion.isMonitoring) {
+    if (sameBeaconRegion.isMonitoring) {
         return;
     }
     
@@ -78,6 +75,9 @@
     
     [_locationManager startMonitoringForRegion:beaconRegion];
     beaconRegion.isMonitoring = YES;
+    [self addBRMRegion:beaconRegion];
+    
+    [_regions removeObject:beaconRegion];
     
     if ([self.beaconReceviceDelegate respondsToSelector:@selector(startRegionMonitoring:)]) {
         [self.beaconReceviceDelegate startRegionMonitoring:beaconRegion.identifier];
@@ -86,17 +86,12 @@
 
 - (void)startLocationRegionMonitoring:(BRMLocationRegion *)circularRegion
 {
-    CLCircularRegion *sameRegion = (CLCircularRegion *)[self getMonitoringLocationRegion:circularRegion];
-    if (!sameRegion) {
+    BRMLocationRegion *sameLocationRegion = [self getMonitoringLocationRegion:circularRegion];
+    if (!sameLocationRegion) {
         [_regions addObject:circularRegion];
     }
     
-    if (sameRegion && ![sameRegion isKindOfClass:[BRMLocationRegion class]]) {
-        return;
-    }
-    
-    BRMLocationRegion *sameBRMLocationRegion = (BRMLocationRegion *)sameRegion;
-    if (sameBRMLocationRegion.isMonitoring) {
+    if (sameLocationRegion.isMonitoring) {
         return;
     }
     
@@ -106,6 +101,9 @@
 
     [_locationManager startMonitoringForRegion:circularRegion];
     circularRegion.isMonitoring = YES;
+    [self addBRMRegion:circularRegion];
+    
+    [_regions removeObject:circularRegion];
     
     if ([self.locationReceviceDelegate respondsToSelector:@selector(startRegionMonitoring:)]) {
         [self.locationReceviceDelegate startRegionMonitoring:circularRegion.identifier];
@@ -116,21 +114,76 @@
 {
     if ([self isMonitoringBeaconRegion:region]) {
         [_locationManager stopMonitoringForRegion:region];
+
+        BRMBeaconRegion *beaconRegion = [self getMonitoringBeaconRegion:region];
+        [_monitoringBeaconRegions removeObject:beaconRegion];
+        
         if ([self.beaconReceviceDelegate respondsToSelector:@selector(stopRegionMonitoring:)]) {
             [self.beaconReceviceDelegate stopRegionMonitoring:region.identifier];
         }
     }
     if ([self isMonitoringLocationRegion:region]) {
         [_locationManager stopMonitoringForRegion:region];
+
+        BRMLocationRegion *locationRegion = [self getMonitoringLocationRegion:region];
+        [_monitoringBeaconRegions removeObject:locationRegion];
+        
         if ([self.locationReceviceDelegate respondsToSelector:@selector(stopRegionMonitoring:)]) {
             [self.locationReceviceDelegate stopRegionMonitoring:region.identifier];
         }
     }
 }
 
+- (void)initMonitoringRegions
+{
+    _monitoringBeaconRegions = [@[] mutableCopy];
+
+    for (CLRegion *region in _locationManager.monitoredRegions) {
+        if ([region isKindOfClass:[CLBeaconRegion class]]) {
+            CLBeaconRegion *beaconRegion = (CLBeaconRegion *)region;
+            BRMBeaconRegion *brmBeaconRegion;
+            if (beaconRegion.major && beaconRegion.minor) {
+                brmBeaconRegion = [[BRMBeaconRegion alloc] initWithProximityUUID:beaconRegion.proximityUUID major:[beaconRegion.major integerValue] minor:[beaconRegion.minor integerValue] identifier:beaconRegion.identifier];
+            }
+            else if (beaconRegion.major) {
+                brmBeaconRegion = [[BRMBeaconRegion alloc] initWithProximityUUID:beaconRegion.proximityUUID major:[beaconRegion.major integerValue] identifier:beaconRegion.identifier];
+            }
+            else {
+                brmBeaconRegion = [[BRMBeaconRegion alloc] initWithProximityUUID:beaconRegion.proximityUUID identifier:beaconRegion.identifier];
+            }
+            brmBeaconRegion.isMonitoring = YES;
+            [_monitoringBeaconRegions addObject:brmBeaconRegion];
+        }
+        else if ([region isKindOfClass:[CLCircularRegion class]]) {
+            CLCircularRegion *locationRegion = (CLCircularRegion *)region;
+            BRMLocationRegion *brmLocationRegion = [[BRMLocationRegion alloc] initWithCenter:locationRegion.center radius:locationRegion.radius identifier:locationRegion.identifier];
+            brmLocationRegion.isMonitoring = YES;
+            [_monitoringLocationRegions addObject:brmLocationRegion];
+        }
+    }
+}
+
+- (void)addBRMRegion:(CLRegion *)region
+{
+    if ([region isKindOfClass:[BRMBeaconRegion class]]) {
+        for (CLRegion *cmpRegion in _monitoringBeaconRegions) {
+            if ([self isEqualBeaconRegion:(BRMBeaconRegion *)region targetRegion:cmpRegion]) {
+                [_monitoringBeaconRegions addObject:region];
+            }
+        }
+    }
+    else if ([region isKindOfClass:[BRMLocationRegion class]]) {
+        for (CLRegion *cmpRegion in _monitoringLocationRegions) {
+            if ([self isEqualLocationRegion:(BRMLocationRegion *)region targetRegion:cmpRegion]) {
+                [_monitoringLocationRegions addObject:region];
+            }
+        }
+    }
+}
+
 #pragma mark - Public function for ReceiveManager
 
-- (BOOL)isEqualBeaonRegion:(CLBeaconRegion *)beaconRegion targetRegion:(CLRegion *)region
+- (BOOL)isEqualBeaconRegion:(CLBeaconRegion *)beaconRegion targetRegion:(CLRegion *)region
 {
     if (![region isKindOfClass:[CLBeaconRegion class]] ) {
         return NO;
@@ -156,61 +209,41 @@
     return NO;
 }
 
-- (CLBeaconRegion *)getMonitoringBeaconRegion:(CLRegion *)region
+- (BRMBeaconRegion *)getMonitoringBeaconRegion:(CLRegion *)region
 {
     if (![region isKindOfClass:[CLBeaconRegion class]]) {
         return nil;
     }
     
     CLBeaconRegion *beaconRegion = (CLBeaconRegion *)region;
-    
-    for (CLRegion *monitorRegion in _locationManager.monitoredRegions) {
-        if ([self isEqualBeaonRegion:beaconRegion targetRegion:monitorRegion]) {
-            return (CLBeaconRegion *)monitorRegion;
+    for (CLRegion *monitoringRegion in _monitoringBeaconRegions) {
+        if ([self isEqualBeaconRegion:beaconRegion targetRegion:monitoringRegion]) {
+            return (BRMBeaconRegion *)monitoringRegion;
         }
     }
-    
-    for (CLRegion *monitorRegion in _regions) {
-        if ([self isEqualBeaonRegion:beaconRegion targetRegion:monitorRegion]) {
-            return (CLBeaconRegion *)monitorRegion;
-        }
-    }
-    
+
     return nil;
 }
 
-- (CLCircularRegion *)getMonitoringLocationRegion:(CLRegion *)region
+- (BRMLocationRegion *)getMonitoringLocationRegion:(CLRegion *)region
 {
     if (![region isKindOfClass:[CLCircularRegion class]]) {
         return nil;
     }
     
     CLCircularRegion *circularRegion = (CLCircularRegion *)region;
-    
-    for (CLRegion *monitorRegion in _locationManager.monitoredRegions) {
-        if ([self isEqualLocationRegion:circularRegion targetRegion:monitorRegion]) {
-            return (CLCircularRegion *)monitorRegion;
-        }
-    }
-    
-    for (CLRegion *monitorRegion in _regions) {
-        if ([self isEqualLocationRegion:circularRegion targetRegion:monitorRegion]) {
-            return (CLCircularRegion *)monitorRegion;
+    for (CLRegion *monitoringRegion in _monitoringLocationRegions) {
+        if ([self isEqualLocationRegion:circularRegion targetRegion:monitoringRegion]) {
+            return (BRMLocationRegion *)monitoringRegion;
         }
     }
     
     return nil;
 }
 
-- (CLRegion *)getRegionWithIdentifier:(NSString *)identifier
+- (CLRegion *)getMonitoringRegionWithIdentifier:(NSString *)identifier
 {
     for (CLRegion *monitorRegion in _locationManager.monitoredRegions) {
-        if ([monitorRegion.identifier isEqualToString:identifier]) {
-            return monitorRegion;
-        }
-    }
-    
-    for (CLRegion *monitorRegion in _regions) {
         if ([monitorRegion.identifier isEqualToString:identifier]) {
             return monitorRegion;
         }
@@ -221,7 +254,7 @@
 
 - (BOOL)isMonitoringBeaconRegion:(CLRegion *)region
 {
-    CLBeaconRegion *beaconRegion = [self getMonitoringBeaconRegion:region];
+    BRMBeaconRegion *beaconRegion = [self getMonitoringBeaconRegion:region];
     if (beaconRegion) {
         return YES;
     }
@@ -231,7 +264,7 @@
 
 - (BOOL)isMonitoringLocationRegion:(CLRegion *)region
 {
-    CLCircularRegion *circularRegion = [self getMonitoringLocationRegion:region];
+    BRMLocationRegion *circularRegion = [self getMonitoringLocationRegion:region];
     if (circularRegion) {
         return YES;
     }
@@ -282,6 +315,9 @@
     BRMDLog(@"Identifier %@", region.identifier);
     
     if ([self isMonitoringBeaconRegion:region]) {
+        BRMBeaconRegion *beaconRegion = [self getMonitoringBeaconRegion:region];
+        beaconRegion.entered = YES;
+        
         if (_allowRanging) {
             [_locationManager startRangingBeaconsInRegion:(CLBeaconRegion *)region];
         }
@@ -291,6 +327,9 @@
         }
     }
     else if ([self isMonitoringLocationRegion:region]) {
+        BRMLocationRegion *locationRegion = [self getMonitoringLocationRegion:region];
+        locationRegion.entered = YES;
+
         if ([self.locationReceviceDelegate respondsToSelector:@selector(didUpdateRegionEnter:)]) {
             [self.locationReceviceDelegate didUpdateRegionEnter:region.identifier];
         }
@@ -302,12 +341,19 @@
     BRMDLog(@"Identifier %@", region.identifier);
     
     if ([self isMonitoringBeaconRegion:region]) {
+        BRMBeaconRegion *beaconRegion = [self getMonitoringBeaconRegion:region];
+        beaconRegion.entered = NO;
+        beaconRegion.beacons = nil;
+        
         [_locationManager stopRangingBeaconsInRegion:(CLBeaconRegion *)region];
         if ([self.beaconReceviceDelegate respondsToSelector:@selector(didUpdateRegionExit:)]) {
             [self.beaconReceviceDelegate didUpdateRegionExit:region.identifier];
         }
     }
     else if ([self isMonitoringLocationRegion:region]) {
+        BRMLocationRegion *locationRegion = [self getMonitoringLocationRegion:region];
+        locationRegion.entered = NO;
+
         if ([self.locationReceviceDelegate respondsToSelector:@selector(didUpdateRegionExit:)]) {
             [self.locationReceviceDelegate didUpdateRegionExit:region.identifier];
         }
@@ -453,6 +499,9 @@
     }
     
     NSString *identifier = region.identifier;
+    
+    BRMBeaconRegion *beaconRegion = [self getMonitoringBeaconRegion:region];
+    beaconRegion.beacons = beacons;
     
     if ([self.beaconReceviceDelegate respondsToSelector:@selector(didRangeBeacons:identifier:)]) {
         [self.beaconReceviceDelegate didRangeBeacons:beacons identifier:identifier];

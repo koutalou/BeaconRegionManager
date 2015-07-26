@@ -14,6 +14,7 @@
 
 @property (nonatomic) BOOL isMonitoring;
 @property (nonatomic) BOOL entered;
+@property (nonatomic, weak) NSArray *beacons;
 
 @end
 
@@ -52,10 +53,12 @@
 - (void)startLocationRegionMonitoring:(BRMLocationRegion *)circularRegion;
 - (void)stopRegionMonitoring:(CLRegion *)region;
 
-- (CLRegion *)getRegionWithIdentifier:(NSString *)identifier;
+- (CLRegion *)getMonitoringRegionWithIdentifier:(NSString *)identifier;
 
 @property (nonatomic, weak) id<IBRMRegionBeaconDelegate> beaconReceviceDelegate;
 @property (nonatomic, weak) id<IBRMRegionLocationDelegate> locationReceviceDelegate;
 @property (nonatomic) BOOL allowRanging;
+@property (nonatomic, strong) NSMutableArray *monitoringBeaconRegions;
+@property (nonatomic, strong) NSMutableArray *monitoringLocationRegions;
 
 @end

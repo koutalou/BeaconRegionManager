@@ -24,6 +24,8 @@
 + (BRMLocationReceiveManager *)sharedManager;
 - (void)monitorLocationRegionWithLatitude:(double)latitude longitude:(double)longitude distance:(NSInteger)distance identifier:(NSString *)identifier;
 
+- (NSArray *)getMonitoringLocationRegions;
+
 @property (nonatomic, weak) id<BRMLocationReceiveDelegate> delegate;
 
 @end

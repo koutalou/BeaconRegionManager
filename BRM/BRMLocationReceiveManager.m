@@ -49,10 +49,15 @@
 
 - (void)ceaseMonitoringLocationRegionWithIdentifer:(NSString *)identifier
 {
-    CLRegion *region = [_regionManager getRegionWithIdentifier:identifier];
+    CLRegion *region = [_regionManager getMonitoringRegionWithIdentifier:identifier];
     if ([region isKindOfClass:[CLCircularRegion class]] || [region isKindOfClass:[BRMLocationRegion class]]) {
         [_regionManager stopRegionMonitoring:region];
     }
+}
+
+- (NSArray *)getMonitoringLocationRegions
+{
+    return _regionManager.monitoringLocationRegions;
 }
 
 #pragma mark CIRegionBeaconDelegate

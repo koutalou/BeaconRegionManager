@@ -60,10 +60,15 @@
 
 - (void)ceaseMonitoringBeaconRegionWithIdentifer:(NSString *)identifier
 {
-    CLRegion *region = [_regionManager getRegionWithIdentifier:identifier];
+    CLRegion *region = [_regionManager getMonitoringRegionWithIdentifier:identifier];
     if ([region isKindOfClass:[CLBeaconRegion class]] || [region isKindOfClass:[BRMBeaconRegion class]]) {
         [_regionManager stopRegionMonitoring:region];
     }
+}
+
+- (NSArray *)monitoringBeaconRegions
+{
+    return _regionManager.monitoringBeaconRegions;
 }
 
 #pragma mark - Override allowRanging
