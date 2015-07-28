@@ -9,8 +9,8 @@
 #import "BRMBeacon.h"
 #import "iBeaconSendViewController.h"
 
-#define BEACON_UUID       @"2B8CA298-6420-4B28-BB93-23DCF33899B5"
-#define BEACON_IDENTIFIER @"BEACON_SEND"
+#define BRM_BEACON_UUID       @"2290B76D-300E-40C1-A40A-38D28477ADCB"
+#define BRM_BEACON_IDENTIFIER @"BRM_SEND_BEACON"
 
 @interface iBeaconSendViewController ()
 
@@ -21,8 +21,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    uuidTextField.text = BEACON_UUID;
-    identifierTextField.text = BEACON_IDENTIFIER;
+    uuidTextField.text = BRM_BEACON_UUID;
+    identifierTextField.text = BRM_BEACON_IDENTIFIER;
     
     majorTextField.text = @"1";
     minorTextField.text = @"1";

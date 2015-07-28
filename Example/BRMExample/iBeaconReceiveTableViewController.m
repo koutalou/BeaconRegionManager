@@ -8,8 +8,8 @@
 
 #import "iBeaconReceiveTableViewController.h"
 
-#define BEACONCOMM_UUID       @"2B8CA298-6420-4B28-BB93-23DCF33899B5"
-#define BEACONCOMM_IDENTIFIER @"BEACON_COMM"
+#define BRM_BEACON_UUID       @"2290B76D-300E-40C1-A40A-38D28477ADCB"
+#define BRM_BEACON_IDENTIFIER @"BRM_RECEIVE_BEACON"
 
 @interface iBeaconReceiveTableViewController ()
 
@@ -21,7 +21,7 @@
     [super viewDidLoad];
     
     [BRMBeaconReceiveManager sharedManager].delegate = self;
-    [[BRMBeaconReceiveManager sharedManager] monitorBeaconRegionWithUuid:BEACONCOMM_UUID identifier:BEACONCOMM_IDENTIFIER];
+    [[BRMBeaconReceiveManager sharedManager] monitorBeaconRegionWithUuid:BRM_BEACON_UUID identifier:BRM_BEACON_IDENTIFIER];
 }
 
 - (void)didReceiveMemoryWarning {
