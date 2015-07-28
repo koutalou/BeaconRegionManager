@@ -1,6 +1,6 @@
 # Beacon Region Manager
 
-Beacon Region Manager is wrapper for Region monitoring of geographical regions and beacon regions API, Sending iBeacon signal.
+Beacon Region Manager is wrapper library for Region monitoring of geographical regions and beacon regions API, Sending iBeacon signal.
 
 # Requirements
 
@@ -72,6 +72,45 @@ You need to inherit BRMLocationReceiveDelegate to set delegation.
 ```objective-c
 @interface MyClass : NSObject<BRMLocationReceiveDelegate>
 ```
+
+Region monitoring delegates defined in BRMLocationReceiveDelegate,
+
+```objective-c
+- (void)didUpdateRegionEnter:(NSString *)identifier;
+- (void)didUpdateRegionExit:(NSString *)identifier;
+```
+
+## Receive Eddystone region monitoring and ranging.
+
+```objective-c
+BRMEddystoneReceiveManager *eddystoneReceiveManager = [BRMEddystoneReceiveManager sharedManager]
+eddystoneReceiveManager.delegate = self;
+```
+
+You need to inherit BRMEddystoneReceiveDelegate to set delegation.
+
+```objective-c
+@interface MyClass : NSObject<BRMEddystoneReceiveDelegate>
+```
+
+Region monitoring delegates defined in BRMEddystoneReceiveDelegate,
+
+```objective-c
+- (void)didUpdateEnterUIDBeacon:(BRMEddystoneUIDBeacon *)brmUIDBeacon;
+- (void)didUpdateEnterURLBeacon:(BRMEddystoneURLBeacon *)brmURLBeacon;
+- (void)didUpdateEnterTLMBeacon:(BRMEddystoneTLMBeacon *)brmTLMBeacon;
+- (void)didUpdateExitUIDBeacon:(BRMEddystoneUIDBeacon *)brmUIDBeacon;
+- (void)didUpdateExitURLBeacon:(BRMEddystoneURLBeacon *)brmURLBeacon;
+- (void)didUpdateExitTLMBeacon:(BRMEddystoneTLMBeacon *)brmTLMBeacon;
+```
+
+Ranging delegates defined in BRMEddystoneReceiveDelegate,
+
+```objective-c
+- (void)didRangeBeacons:(NSArray *)beacons;
+```
+
+You can get Eddystone beacon information from BRMEddystoneUIDBeacon, BRMEddystoneURLBeacon, BRMEddystoneTLMBeacon.
 
 # License
 
