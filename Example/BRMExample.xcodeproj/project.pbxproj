@@ -19,6 +19,8 @@
 		27EF04A91B64EB0C0093862D /* BRMBeaconSendManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 27EF04A31B64EB0C0093862D /* BRMBeaconSendManager.m */; };
 		27EF04AA1B64EB0C0093862D /* BRMLocationReceiveManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 27EF04A51B64EB0C0093862D /* BRMLocationReceiveManager.m */; };
 		27EF04AB1B64EB0C0093862D /* BRMRegionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 27EF04A71B64EB0C0093862D /* BRMRegionManager.m */; };
+		27EF04AE1B675DF00093862D /* BRMEddystoneReceiveManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 27EF04AD1B675DF00093862D /* BRMEddystoneReceiveManager.m */; };
+		27EF04B21B678DA60093862D /* EddystoneReceiveTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 27EF04B11B678DA60093862D /* EddystoneReceiveTableViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,6 +58,10 @@
 		27EF04A51B64EB0C0093862D /* BRMLocationReceiveManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BRMLocationReceiveManager.m; sourceTree = "<group>"; };
 		27EF04A61B64EB0C0093862D /* BRMRegionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BRMRegionManager.h; sourceTree = "<group>"; };
 		27EF04A71B64EB0C0093862D /* BRMRegionManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BRMRegionManager.m; sourceTree = "<group>"; };
+		27EF04AC1B675DF00093862D /* BRMEddystoneReceiveManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BRMEddystoneReceiveManager.h; sourceTree = "<group>"; };
+		27EF04AD1B675DF00093862D /* BRMEddystoneReceiveManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BRMEddystoneReceiveManager.m; sourceTree = "<group>"; };
+		27EF04B01B678DA60093862D /* EddystoneReceiveTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EddystoneReceiveTableViewController.h; sourceTree = "<group>"; };
+		27EF04B11B678DA60093862D /* EddystoneReceiveTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EddystoneReceiveTableViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -100,6 +106,8 @@
 			children = (
 				27EF04621B64A9660093862D /* AppDelegate.h */,
 				27EF04631B64A9660093862D /* AppDelegate.m */,
+				27EF04B01B678DA60093862D /* EddystoneReceiveTableViewController.h */,
+				27EF04B11B678DA60093862D /* EddystoneReceiveTableViewController.m */,
 				27EF049B1B64C6FE0093862D /* iBeaconReceiveTableViewController.h */,
 				27EF049C1B64C6FE0093862D /* iBeaconReceiveTableViewController.m */,
 				27EF04981B64AAE70093862D /* iBeaconSendViewController.h */,
@@ -158,6 +166,8 @@
 				27EF04A51B64EB0C0093862D /* BRMLocationReceiveManager.m */,
 				27EF04A61B64EB0C0093862D /* BRMRegionManager.h */,
 				27EF04A71B64EB0C0093862D /* BRMRegionManager.m */,
+				27EF04AC1B675DF00093862D /* BRMEddystoneReceiveManager.h */,
+				27EF04AD1B675DF00093862D /* BRMEddystoneReceiveManager.m */,
 			);
 			name = BRM;
 			path = ../BRM;
@@ -264,6 +274,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				27EF04A81B64EB0C0093862D /* BRMBeaconReceiveManager.m in Sources */,
+				27EF04B21B678DA60093862D /* EddystoneReceiveTableViewController.m in Sources */,
+				27EF04AE1B675DF00093862D /* BRMEddystoneReceiveManager.m in Sources */,
 				27EF049A1B64AAE70093862D /* iBeaconSendViewController.m in Sources */,
 				27EF04641B64A9660093862D /* AppDelegate.m in Sources */,
 				27EF04611B64A9660093862D /* main.m in Sources */,
