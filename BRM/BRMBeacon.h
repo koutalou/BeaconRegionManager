@@ -14,6 +14,7 @@
 #import "BRMRegionManager.h"
 #import "BRMBeaconReceiveManager.h"
 #import "BRMBeaconSendManager.h"
+#import "BRMEddystoneReceiveManager.h"
 
 #ifdef DEBUG
 #define BRMDLog(fmt, ...) NSLog((@"%s [Line %d] " fmt), __PRETTY_FUNCTION__, __LINE__, ##__VA_ARGS__);
