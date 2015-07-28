@@ -136,4 +136,42 @@
     return cell;
 }
 
+#pragma mark - BRMBeaconReceiveDelegate
+
+- (void)didUpdatePeripheralState:(CBPeripheralManagerState)state
+{
+    NSLog(@"%s",__PRETTY_FUNCTION__);
+}
+
+- (void)didUpdateAuthorizationStatus:(CLAuthorizationStatus)status
+{
+    NSLog(@"%s",__PRETTY_FUNCTION__);
+}
+
+- (void)startRegionMonitoring:(NSString *)identifier
+{
+    NSLog(@"%s",__PRETTY_FUNCTION__);
+}
+
+- (void)stopRegionMonitoring:(NSString *)identifier
+{
+    NSLog(@"%s",__PRETTY_FUNCTION__);
+}
+
+- (void)didRangeBeacons:(NSArray *)beacons identifier:(NSString *)identifier
+{
+    NSLog(@"%s",__PRETTY_FUNCTION__);
+    [self.tableView reloadData];
+}
+
+- (void)didUpdateRegionEnter:(NSString *)identifier
+{
+    NSLog(@"%s",__PRETTY_FUNCTION__);
+}
+
+- (void)didUpdateRegionExit:(NSString *)identifier
+{
+    NSLog(@"%s",__PRETTY_FUNCTION__);
+}
+
 @end
