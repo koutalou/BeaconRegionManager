@@ -41,7 +41,7 @@
         }
         
         unsigned char txPowerChar = *(data+1);
-        if (txPowerChar & 0xf0) {
+        if (txPowerChar & 0x80) {
             self.txPower = [NSNumber numberWithInt:(- 0x100 + txPowerChar)];
         }
         else {
@@ -140,7 +140,7 @@
         }
         
         unsigned char txPowerChar = *(data+1);
-        if (txPowerChar & 0xf0) {
+        if (txPowerChar & 0x80) {
             self.txPower = [NSNumber numberWithInt:(- 0x100 + txPowerChar)];
         }
         else {
@@ -192,18 +192,17 @@
         
         /* [TDOO] Set TML Beacon Properties */
         self.version = [NSNumber numberWithInt:*(data+1)];
-        self.mvPerbit = [NSNumber numberWithInt:(*(data+2) + (*(data+3) << 4))];
+        self.mvPerbit = [NSNumber numberWithInt:((*(data+2) << 4) + *(data+3))];
         
-        unsigned char temperatureInt = *(data+5);
-        if (temperatureInt & 0xf0) {
-            self.temperature = [NSNumber numberWithFloat:(float)(- 0x100 + temperatureInt) + *(data+4) / 256.0];
+        unsigned char temperatureInt = *(data+4);
+        if (temperatureInt & 0x80) {
+            self.temperature = [NSNumber numberWithFloat:(float)(- 0x100 + temperatureInt) + *(data+5) / 256.0];
         }
         else {
-            self.temperature = [NSNumber numberWithFloat:(float)temperatureInt + *(data+4) / 256.0];
+            self.temperature = [NSNumber numberWithFloat:(float)temperatureInt + *(data+5) / 256.0];
         }
-        self.advertiseCount = [NSNumber numberWithLong:(*(data+6) + (*(data+7) << 4) + (*(data+8) << 8) + (*(data+9) << 12))];
-        self.advertiseCount = [NSNumber numberWithLong:(*(data+6) + (*(data+7) << 4) + (*(data+8) << 8) + (*(data+9) << 12))];
-        self.deciSecondsSinceBoot = [NSNumber numberWithDouble:((*(data+10) + (*(data+11) << 4) + (*(data+12) << 8) + (*(data+13) << 12)) / 10.0)];
+        self.advertiseCount = [NSNumber numberWithLong:((*(data+6) << 12) + (*(data+7) << 8) + (*(data+8) << 4) + *(data+9))];
+        self.deciSecondsSinceBoot = [NSNumber numberWithDouble:(((*(data+10) << 12) + (*(data+11) << 8) + (*(data+12) << 4) + *(data+13)) / 10.0)];
         
         // Free advertise data for char*
         free(data);
