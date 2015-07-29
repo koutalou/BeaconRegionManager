@@ -293,11 +293,16 @@
 {
     NSDate *date = [NSDate date];
     
-    for (BRMEddystoneBeacon *eddystoneBeacon in _monitoringEddystoneBeacons) {
+    for (int i = 0; i < _monitoringEddystoneBeacons.count ;) {
+        BRMEddystoneBeacon *eddystoneBeacon = [_monitoringEddystoneBeacons objectAtIndex:i];
         NSTimeInterval passedTime = [date timeIntervalSinceDate:eddystoneBeacon.lastUpdateDate];
         if (passedTime > 10.0) {
             [self exitBeacon:eddystoneBeacon];
             [_monitoringEddystoneBeacons removeObject:eddystoneBeacon];
+        }
+        else
+        {
+            i++;
         }
     }
     
