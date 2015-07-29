@@ -201,8 +201,10 @@
         else {
             self.temperature = [NSNumber numberWithFloat:(float)temperatureInt + *(data+5) / 256.0];
         }
-        self.advertiseCount = [NSNumber numberWithLong:((*(data+6) << 12) + (*(data+7) << 8) + (*(data+8) << 4) + *(data+9))];
-        self.deciSecondsSinceBoot = [NSNumber numberWithDouble:(((*(data+10) << 12) + (*(data+11) << 8) + (*(data+12) << 4) + *(data+13)) / 10.0)];
+        float advertiseCount = (*(data+6) * 16777216) + (*(data+7) * 65536) + (*(data+8) * 256) + *(data+9);
+        self.advertiseCount = [NSNumber numberWithLong:advertiseCount];
+        float deciSecondsSinceBoot = (((int)(*(data+10) * 16777216) + (int)(*(data+11) * 65536) + (int)(*(data+12) * 256) + *(data+13)) / 10.0);
+        self.deciSecondsSinceBoot = [NSNumber numberWithFloat:deciSecondsSinceBoot];
         
         // Free advertise data for char*
         free(data);
