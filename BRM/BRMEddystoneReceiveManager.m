@@ -48,8 +48,8 @@
             self.txPower = [NSNumber numberWithInt:txPowerChar];
         }
         
-        self.namespaceId = [NSString stringWithFormat:@"%c%c%c%c%c%c%c%c%c%c",*(data+2), *(data+3), *(data+4), *(data+5), *(data+6), *(data+7), *(data+8), *(data+9), *(data+10), *(data+11)];
-        self.namespaceId = [NSString stringWithFormat:@"%c%c%c%c%c%c",*(data+12), *(data+13), *(data+14), *(data+15), *(data+16), *(data+17)];
+        self.namespaceId = [NSString stringWithFormat:@"%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x",*(data+2), *(data+3), *(data+4), *(data+5), *(data+6), *(data+7), *(data+8), *(data+9), *(data+10), *(data+11)];
+        self.instanceId = [NSString stringWithFormat:@"%02x%02x%02x%02x%02x%02x",*(data+12), *(data+13), *(data+14), *(data+15), *(data+16), *(data+17)];
         
         // Free advertise data for char*
         free(data);
