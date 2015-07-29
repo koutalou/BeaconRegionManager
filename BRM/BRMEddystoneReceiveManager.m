@@ -340,8 +340,44 @@
         }
         
         sameBeacon.lastUpdateDate = [NSDate date];
+        if ([eddystoneBeacon.advertiseData isEqualToData:sameBeacon.advertiseData]) {
+            // No update advertiseData
+            return;
+        }
         
-        // No update other date because it's always same value for Eddystone specification.
+        // Update beacon information
+        switch (eddystoneBeacon.frameType) {
+            case kBRMEddystoneUIDFrameType:
+            {
+                BRMEddystoneUIDBeacon *uidBeacon = (BRMEddystoneUIDBeacon *)eddystoneBeacon;
+                BRMEddystoneUIDBeacon *sameUIDBeacon = (BRMEddystoneUIDBeacon *)sameBeacon;
+                sameUIDBeacon.txPower = uidBeacon.txPower;
+                sameUIDBeacon.namespaceId = uidBeacon.namespaceId;
+                sameUIDBeacon.instanceId = uidBeacon.instanceId;
+                break;
+            }
+            case kBRMEddystoneURLFrameType:
+            {
+                BRMEddystoneURLBeacon *urlBeacon = (BRMEddystoneURLBeacon *)eddystoneBeacon;
+                BRMEddystoneURLBeacon *sameURLBeacon = (BRMEddystoneURLBeacon *)sameBeacon;
+                sameURLBeacon.txPower = urlBeacon.txPower;
+                sameURLBeacon.shortUrl = urlBeacon.shortUrl;
+                break;
+            }
+            case kBRMEddystoneTLMFrameType:
+            {
+                BRMEddystoneTLMBeacon *tlmBeacon = (BRMEddystoneTLMBeacon *)eddystoneBeacon;
+                BRMEddystoneTLMBeacon *sameTLMBeacon = (BRMEddystoneTLMBeacon *)sameBeacon;
+                sameTLMBeacon.version = tlmBeacon.version;
+                sameTLMBeacon.mvPerbit = tlmBeacon.mvPerbit;
+                sameTLMBeacon.temperature = tlmBeacon.temperature;
+                sameTLMBeacon.advertiseCount = tlmBeacon.advertiseCount;
+                sameTLMBeacon.deciSecondsSinceBoot = tlmBeacon.deciSecondsSinceBoot;
+                break;
+            }
+            default:
+                break;
+        }
     }
     else {
         // Found New Beacon
