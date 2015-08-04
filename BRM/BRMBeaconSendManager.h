@@ -25,10 +25,27 @@
 #import <CoreLocation/CoreLocation.h>
 #import <CoreBluetooth/CoreBluetooth.h>
 
+/**
+ * 'BRMBeaconSendManager' have convenience methods for sending Beacon signal.
+ */
 @interface BRMBeaconSendManager : NSObject <CBPeripheralManagerDelegate>
 
+/**
+ *  Singleton method, return the shared instance
+ *
+ *  @return shared instance of BRMBeaconSendManager class
+ */
 + (BRMBeaconSendManager *)sharedManager;
 
+/**
+ *  Send beacon signal.
+ *
+ *  @param uuid       uuid of region
+ *  @param identifier identifier of region
+ *  @param major      major of region
+ *  @param minor      minor of region
+ *  @param second     transmission time
+ */
 - (void)startBeaconWithUUID:(NSString *)uuid identifier:(NSString *)identifier major:(int)major minor:(int)minor second:(int)second;
 
 @end

@@ -25,6 +25,9 @@
 #import <CoreLocation/CoreLocation.h>
 #import <CoreBluetooth/CoreBluetooth.h>
 
+/*
+ * Delegates to the BRMBeaconReceiveManager should implement this protocol.
+ */
 @protocol BRMBeaconReceiveDelegate <NSObject>
 @optional
 - (void)didUpdatePeripheralState:(CBPeripheralManagerState)state;
@@ -36,18 +39,67 @@
 - (void)didUpdateRegionExit:(NSString *)identifier;
 @end
 
+/**
+ * 'BRMBeaconReceiveManager' have convenience methods for receiving Beacon region event and ranging.
+ */
 @interface BRMBeaconReceiveManager : NSObject <IBRMRegionBeaconDelegate>
 
+/**
+ *  The BOOL value (in seconds) for allow ranging beacon region. Default: YES.
+ */
 @property (nonatomic) BOOL allowRanging;
+
+/**
+ *  The object is delegate of BRMBeaconReceiveDelegate.
+ */
 @property (nonatomic, weak) id<BRMBeaconReceiveDelegate> delegate;
 
+/**
+ *  Singleton method, return the shared instance
+ *
+ *  @return shared instance of BRMBeaconReceiveManager class
+ */
 + (BRMBeaconReceiveManager *)sharedManager;
 
+/**
+ *  Start monitoring beacon region.
+ *
+ *  @param uuid       uuid of region
+ *  @param identifier identifier of region
+ */
 - (void)monitorBeaconRegionWithUuid:(NSString *)uuid identifier:(NSString *)identifier;
+
+/**
+ *  Start monitoring beacon region.
+ *
+ *  @param uuid       uuid of region
+ *  @param major      major of region
+ *  @param identifier identifier of region
+ */
 - (void)monitorBeaconRegionWithUuid:(NSString *)uuid major:(CLBeaconMajorValue)major identifier:(NSString *)identifier;
+
+/**
+ *  Start monitoring beacon region.
+ *
+ *  @param uuid       uuid of region
+ *  @param major      major of region
+ *  @param minor      minor of region
+ *  @param identifier identifier of region
+ */
 - (void)monitorBeaconRegionWithUuid:(NSString *)uuid major:(CLBeaconMajorValue)major minor:(CLBeaconMajorValue)minor identifier:(NSString *)identifier;
+
+/**
+ *  Stop monitoring beacon region.
+ *
+ *  @param identifier identifier of region
+ */
 - (void)ceaseMonitoringBeaconRegionWithIdentifer:(NSString *)identifier;
 
+/**
+ * Returns the NSArray of monitoring beacon regions.
+ *
+ * @return The NSArray of BRMBeaconRegion that is monitored region by CLLocationManager.
+ */
 - (NSArray *)monitoringBeaconRegions;
 
 @end

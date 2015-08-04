@@ -25,7 +25,13 @@
 #import <CoreLocation/CoreLocation.h>
 #import <CoreBluetooth/CoreBluetooth.h>
 
+/**
+ * 'BRMBeaconRegion' is a subclass of 'CLBeaconRegion' for manage Beacon Region information.
+ */
 @interface BRMBeaconRegion : CLBeaconRegion
+//-----------------------------------------------------------------------------------------------
+// BRMBeaconRegion
+//-----------------------------------------------------------------------------------------------
 
 @property (nonatomic) BOOL isMonitoring;
 @property (nonatomic) BOOL entered;
@@ -33,7 +39,13 @@
 
 @end
 
+/**
+ * 'BRMLocationRegion' is a subclass of 'CLCircularRegion' for manage Location Region information.
+ */
 @interface BRMLocationRegion : CLCircularRegion
+//-----------------------------------------------------------------------------------------------
+// BRMLocationRegion
+//-----------------------------------------------------------------------------------------------
 
 @property (nonatomic) BOOL isMonitoring;
 @property (nonatomic) BOOL entered;
@@ -60,14 +72,45 @@
 - (void)didUpdateRegionExit:(NSString *)identifier;
 @end
 
+/**
+ * 'BRMRegionManager' is receiving region and ranging helper for BRMBeaconReceiveManager and BRMLocationReceiveManager.
+ * Application should not use this class directly.
+ */
 @interface BRMRegionManager : NSObject <CBPeripheralManagerDelegate, CLLocationManagerDelegate>
 
+/**
+ *  Singleton method, return the shared instance
+ *
+ *  @return shared instance of BRMRegionManager class
+ */
 + (BRMRegionManager *)sharedManager;
 
+/**
+ * Start region monitoring for beacon.
+ *
+ * @param beaconRegion The region for the beacon.
+ */
 - (void)startBeaconRegionMonitoring:(BRMBeaconRegion *)beaconRegion;
+
+/**
+ * Start region monitoring for location.
+ *
+ * @param beaconRegion the region for the location.
+ */
 - (void)startLocationRegionMonitoring:(BRMLocationRegion *)circularRegion;
+
+/**
+ * Stop region monitoring for beacon and location.
+ *
+ * @param region the region for beacon and location.
+ */
 - (void)stopRegionMonitoring:(CLRegion *)region;
 
+/**
+ * Return region of match the identifier.
+ *
+ * @param identifier identifier of the region.
+ */
 - (CLRegion *)getMonitoringRegionWithIdentifier:(NSString *)identifier;
 
 @property (nonatomic, weak) id<IBRMRegionBeaconDelegate> beaconReceviceDelegate;

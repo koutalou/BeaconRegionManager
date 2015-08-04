@@ -24,6 +24,9 @@
 #import <Foundation/Foundation.h>
 #import <CoreLocation/CoreLocation.h>
 
+/*
+ * Delegates to the BRMLocationReceiveManager should implement this protocol.
+ */
 @protocol BRMLocationReceiveDelegate <NSObject>
 @optional
 - (void)didUpdatePeripheralState:(CBPeripheralManagerState)state;
@@ -34,13 +37,38 @@
 - (void)didUpdateRegionExit:(NSString *)identifier;
 @end
 
+/**
+ * 'BRMLocationReceiveManager' have convenience methods for receiving Location region event.
+ */
 @interface BRMLocationReceiveManager : NSObject <IBRMRegionLocationDelegate>
 
+/**
+ *  Singleton method, return the shared instance
+ *
+ *  @return shared instance of BRMLocationReceiveManager class
+ */
 + (BRMLocationReceiveManager *)sharedManager;
+
+/**
+ *  Start monitoring location region.
+ *
+ *  @param latitude   latitude of region
+ *  @param longitude  longitude of region
+ *  @param distance   circule radius of region
+ *  @param identifier identifier of region
+ */
 - (void)monitorLocationRegionWithLatitude:(double)latitude longitude:(double)longitude distance:(NSInteger)distance identifier:(NSString *)identifier;
 
+/**
+ * Returns the NSArray of monitoring location regions.
+ *
+ * @return The NSArray of BRMLocationRegion that is monitored region by CLLocationManager.
+ */
 - (NSArray *)getMonitoringLocationRegions;
 
+/**
+ *  The object is delegate of BRMLocationReceiveDelegate.
+ */
 @property (nonatomic, weak) id<BRMLocationReceiveDelegate> delegate;
 
 @end

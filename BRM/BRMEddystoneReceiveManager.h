@@ -24,8 +24,15 @@
 #import <Foundation/Foundation.h>
 #import <CoreBluetooth/CoreBluetooth.h>
 
+/**
+ * Eddystones Bluetooth Service ID.
+ */
 static NSString *const kBRMEddystoneServiceID = @"FEAA";
 
+/**
+ * Eddystones have three frame types.
+ * See the Eddystone specification for complete details.
+ */
 typedef NS_ENUM(NSUInteger, BRMFrameType) {
     kBRMEddystoneUIDFrameType = 0,
     kBRMEddystoneURLFrameType = 1,
@@ -33,7 +40,14 @@ typedef NS_ENUM(NSUInteger, BRMFrameType) {
     kBRMEddystoneUnknownFrameType = 3
 };
 
+
+/**
+ * 'BRMEddystoneBeacon' is a superclass for manage eddystone information.
+ */
 @interface BRMEddystoneBeacon : NSObject
+//-----------------------------------------------------------------------------------------------
+// BRMEddystoneBeacon
+//-----------------------------------------------------------------------------------------------
 
 @property (nonatomic) NSInteger frameType;
 @property (nonatomic) NSData *advertiseData;
@@ -44,26 +58,58 @@ typedef NS_ENUM(NSUInteger, BRMFrameType) {
 
 @end
 
+/**
+ * 'BRMEddystoneUIDBeacon' is a subclass of 'BRMEddystoneBeacon' for manage Eddystone-UID information.
+ */
 @interface BRMEddystoneUIDBeacon : BRMEddystoneBeacon
+//-----------------------------------------------------------------------------------------------
+// BRMEddystoneUIDBeacon
+//-----------------------------------------------------------------------------------------------
 
 @property (nonatomic) NSNumber *txPower;
 @property (nonatomic) NSString *namespaceId;
 @property (nonatomic) NSString *instanceId;
 
+/**
+ Initializes an 'BRMEddystoneUIDBeacon' object with the advertiseData.
+ 
+ @param advertiseData The advertised data.
+ 
+ @return The newly-initialized Eddystone-UID instance.
+ */
 - (BRMEddystoneUIDBeacon *)initWithAdvertiseData:(NSData *)advertiseData;
 
 @end
 
+/**
+ * 'BRMEddystoneURLBeacon' is a subclass of 'BRMEddystoneBeacon' for manage Eddystone-URL information.
+ */
 @interface BRMEddystoneURLBeacon : BRMEddystoneBeacon
+//-----------------------------------------------------------------------------------------------
+// BRMEddystoneURLBeacon
+//-----------------------------------------------------------------------------------------------
 
 @property (nonatomic) NSNumber *txPower;
 @property (nonatomic) NSString *shortUrl;
 
+/**
+ Initializes an 'BRMEddystoneURLBeacon' object with the advertiseData.
+ 
+ @param advertiseData The advertised data.
+ 
+ @return The newly-initialized Eddystone-URL instance.
+ */
 - (BRMEddystoneURLBeacon *)initWithAdvertiseData:(NSData *)advertiseData;
 
 @end
 
+/**
+ * 'BRMEddystoneTLMBeacon' is a subclass of 'BRMEddystoneBeacon' for manage Eddystone-TLM information.
+ */
 @interface BRMEddystoneTLMBeacon : BRMEddystoneBeacon
+//-----------------------------------------------------------------------------------------------
+// BRMEddystoneTLMBeacon
+//-----------------------------------------------------------------------------------------------
 
 @property (nonatomic) NSNumber *version;
 @property (nonatomic) NSNumber *mvPerbit;
@@ -71,10 +117,20 @@ typedef NS_ENUM(NSUInteger, BRMFrameType) {
 @property (nonatomic) NSNumber *advertiseCount;
 @property (nonatomic) NSNumber *deciSecondsSinceBoot;
 
+/**
+ Initializes an 'BRMEddystoneTLMBeacon' object with the advertiseData.
+ 
+ @param advertiseData The advertised data.
+ 
+ @return The newly-initialized Eddystone-TLM instance.
+ */
 - (BRMEddystoneTLMBeacon *)initWithAdvertiseData:(NSData *)advertiseData;
 
 @end
 
+/*
+ * Delegates to the BRMEddystoneReceiveManager should implement this protocol.
+ */
 @protocol BRMEddystoneReceiveDelegate <NSObject>
 @optional
 - (void)didRangeBeacons:(NSArray *)beacons;
@@ -86,13 +142,33 @@ typedef NS_ENUM(NSUInteger, BRMFrameType) {
 - (void)didUpdateExitTLMBeacon:(BRMEddystoneTLMBeacon *)brmTLMBeacon;
 @end
 
+/**
+ * 'BRMEddystoneReceiveManager' have convenience methods for receiving Eddystone advertise signal.
+ */
 @interface BRMEddystoneReceiveManager : NSObject <CBCentralManagerDelegate>
 
+/**
+ *  Singleton method, return the shared instance
+ *
+ *  @return shared instance of BRMEddystoneReceiveManager class
+ */
 + (BRMEddystoneReceiveManager *)sharedManager;
 
+/**
+ *  Start monitoring for Eddystone beacon.
+ */
 - (void)startMonitoringEddystoneBeacon;
 
+/**
+ *  The object is delegate of BRMEddystoneReceiveDelegate.
+ */
 @property (nonatomic, weak) id<BRMEddystoneReceiveDelegate> delegate;
+
+/**
+ * Returns the NSArray of monitoring Eddystone beacons.
+ *
+ * @return The NSArray of BRMEddystoneBeacon(BRMEddystoneUIDBeacon, BRMEddystoneURLBeacon, BRMEddystoneTLMBeacon) that is monitored.
+ */
 @property (readonly) NSMutableArray *monitoringEddystoneBeacons;
 
 @end
