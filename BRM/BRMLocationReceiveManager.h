@@ -60,6 +60,13 @@
 - (void)monitorLocationRegionWithLatitude:(double)latitude longitude:(double)longitude distance:(NSInteger)distance identifier:(NSString *)identifier;
 
 /**
+ *  Stop monitoring location region.
+ *
+ *  @param identifier identifier of region
+ */
+- (void)ceaseMonitoringLocationRegionWithIdentifer:(NSString *)identifier;
+
+/**
  * Returns the NSArray of monitoring location regions.
  *
  * @return The NSArray of BRMLocationRegion that is monitored region by CLLocationManager.
