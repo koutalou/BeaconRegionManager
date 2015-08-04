@@ -1,5 +1,9 @@
 # Beacon Region Manager
 
+[![Pod Version](http://img.shields.io/cocoapods/v/BeaconRegionManager.svg?style=flat)](http://cocoadocs.org/docsets/BeaconRegionManager/)
+[![Pod Platform](http://img.shields.io/cocoapods/p/BeaconRegionManager.svg?style=flat)](http://cocoadocs.org/docsets/BeaconRegionManager/)
+[![Pod License](http://img.shields.io/cocoapods/l/BeaconRegionManager.svg?style=flat)](http://opensource.org/licenses/MIT)
+
 Beacon Region Manager is wrapper library for Region monitoring of geographical regions and beacon regions API, Sending iBeacon signal.
 
 # Requirements
