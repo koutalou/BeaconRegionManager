@@ -419,15 +419,10 @@
             return @"Restricted";
         case kCLAuthorizationStatusDenied:
             return @"Denied";
-#if __IPHONE_OS_VERSION_MIN_REQUIRED >= 80000
         case kCLAuthorizationStatusAuthorizedAlways:
             return @"Authorized always";
         case kCLAuthorizationStatusAuthorizedWhenInUse:
             return @"Authorized when in use";
-#else
-        case kCLAuthorizationStatusAuthorized:
-            return @"Authorized";
-#endif
     }
     return @"";
 }
