@@ -134,6 +134,7 @@ typedef NS_ENUM(NSUInteger, BRMFrameType) {
 @protocol BRMEddystoneReceiveDelegate <NSObject>
 @optional
 - (void)didRangeBeacons:(NSArray *)beacons;
+- (void)didUpdateBeacon:(BRMEddystoneBeacon *)beacon;
 - (void)didUpdateEnterUIDBeacon:(BRMEddystoneUIDBeacon *)brmUIDBeacon;
 - (void)didUpdateEnterURLBeacon:(BRMEddystoneURLBeacon *)brmURLBeacon;
 - (void)didUpdateEnterTLMBeacon:(BRMEddystoneTLMBeacon *)brmTLMBeacon;

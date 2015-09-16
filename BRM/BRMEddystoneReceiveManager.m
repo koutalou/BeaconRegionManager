@@ -415,6 +415,10 @@
 
         [self enterBeacon:eddystoneBeacon];
     }
+    
+    if ([_delegate respondsToSelector:@selector(didUpdateBeacon:)]) {
+        [_delegate didUpdateBeacon:sameBeacon];
+    }
 }
 
 - (CBUUID *)getEddystoneServiceID {
