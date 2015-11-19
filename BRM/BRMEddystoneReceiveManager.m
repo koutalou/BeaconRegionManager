@@ -38,18 +38,15 @@
     unsigned long advertiseDataSize = advertiseData.length;
     
     if (self) {
-        if (advertiseDataSize < 20) {
-            return nil;
-        }
+        // On the spec, its 20 bytes. But some beacons doesn't advertise the last 2 RFU bytes.
+        NSAssert1(!(advertiseDataSize < 18), @"Invalid advertiseData:%@", advertiseData);
         
         const unsigned char *cData = [advertiseData bytes];
         unsigned char *data;
         
         // Malloc advertise data for char*
         data = malloc(sizeof(unsigned char) * advertiseDataSize);
-        if (!data) {
-            return nil;
-        }
+        NSAssert(data, @"failed to malloc");
         
         for (int i = 0; i < advertiseDataSize; i++) {
             data[i] = *cData++;
@@ -137,9 +134,7 @@
     unsigned long advertiseDataSize = advertiseData.length;
     
     if (self) {
-        if (advertiseDataSize < 3) {
-            return nil;
-        }
+        NSAssert1(!(advertiseDataSize < 3), @"Invalid advertiseData:%@", advertiseData);
         
         const unsigned char *cData = [advertiseData bytes];
         unsigned char *data;
@@ -188,9 +183,7 @@
     unsigned long advertiseDataSize = advertiseData.length;
     
     if (self) {
-        if (advertiseDataSize < 14) {
-            return nil;
-        }
+        NSAssert1(!(advertiseDataSize < 14), @"Invalid advertiseData:%@", advertiseData);
         
         const unsigned char *cData = [advertiseData bytes];
         unsigned char *data;
@@ -338,6 +331,8 @@
 
 - (void)updateBeacon:(BRMEddystoneBeacon *)eddystoneBeacon rssi:(NSNumber *)rssi
 {
+    NSAssert(eddystoneBeacon, @"eddystoneBeacon must not be nil.");
+    
     if (!_checkTimer) {
         _checkTimer = [NSTimer scheduledTimerWithTimeInterval:1.0f target:self selector:@selector(checkEddystoneBeaconsStatus) userInfo:nil repeats:YES];
     }
@@ -497,34 +492,33 @@
     
     BRMFrameType frameType = [self getFrameTypeWithAdvertiseData:advertiseData];
 
+    BRMEddystoneBeacon *beacon;
+    
     switch (frameType) {
         case kBRMEddystoneUIDFrameType:
         {
-            BRMEddystoneUIDBeacon *uidBeacon = [[BRMEddystoneUIDBeacon alloc] initWithAdvertiseData:advertiseData];
-            uidBeacon.frameType = frameType;
-            uidBeacon.identifier = peripheral.identifier.UUIDString;
-            [self updateBeacon:uidBeacon rssi:RSSI];
+            beacon = [[BRMEddystoneUIDBeacon alloc] initWithAdvertiseData:advertiseData];
             break;
         }
         case kBRMEddystoneURLFrameType:
         {
-            BRMEddystoneURLBeacon *urlBeacon = [[BRMEddystoneURLBeacon alloc] initWithAdvertiseData:advertiseData];
-            urlBeacon.frameType = frameType;
-            urlBeacon.identifier = peripheral.identifier.UUIDString;
-            [self updateBeacon:urlBeacon rssi:RSSI];
+            beacon = [[BRMEddystoneURLBeacon alloc] initWithAdvertiseData:advertiseData];
             break;
         }
         case kBRMEddystoneTLMFrameType:
         {
-            BRMEddystoneTLMBeacon *tlmBeacon = [[BRMEddystoneTLMBeacon alloc] initWithAdvertiseData:advertiseData];
-            tlmBeacon.frameType = frameType;
-            tlmBeacon.identifier = peripheral.identifier.UUIDString;
-            [self updateBeacon:tlmBeacon rssi:RSSI];
+            beacon = [[BRMEddystoneTLMBeacon alloc] initWithAdvertiseData:advertiseData];
             break;
         }
         default:
             // Unknown Eddystone Beacon or Vendor Customize Eddystone Beacon
             break;
+    }
+
+    if (beacon) {
+        beacon.frameType = frameType;
+        beacon.identifier = peripheral.identifier.UUIDString;
+        [self updateBeacon:beacon rssi:RSSI];
     }
 }
 
