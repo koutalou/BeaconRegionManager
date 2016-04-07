@@ -57,16 +57,24 @@
         
         _locationManager = [[CLLocationManager alloc] init];
         _locationManager.delegate = self;
+        if ([_locationManager respondsToSelector:@selector(setAllowsBackgroundLocationUpdates:)]) {
+            [_locationManager setAllowsBackgroundLocationUpdates:YES];
+        }
+        
         
         self.allowRanging = YES;
         _regions = [@[] mutableCopy];
         
         [self initMonitoringRegions];
+        [_locationManager startUpdatingLocation];
         
         float iOSVersion = [[[UIDevice currentDevice] systemVersion] floatValue];
         if (iOSVersion >= 8.0) {
             [self.locationManager requestAlwaysAuthorization];
         }
+        
+        
+        
     }
     return self;
 }
