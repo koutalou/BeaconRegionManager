@@ -175,6 +175,7 @@
                 brmBeaconRegion = [[BRMBeaconRegion alloc] initWithProximityUUID:beaconRegion.proximityUUID identifier:beaconRegion.identifier];
             }
             brmBeaconRegion.isMonitoring = YES;
+            brmBeaconRegion.notifyEntryStateOnDisplay = YES;
             [_monitoringBeaconRegions addObject:brmBeaconRegion];
         }
         else if ([region isKindOfClass:[CLCircularRegion class]]) {
