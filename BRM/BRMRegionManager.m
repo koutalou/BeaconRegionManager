@@ -64,9 +64,10 @@
         
         self.allowRanging = YES;
         _regions = [@[] mutableCopy];
-        
-        [self initMonitoringRegions];
+
         [_locationManager startUpdatingLocation];
+        [self initMonitoringRegions];
+
         
         float iOSVersion = [[[UIDevice currentDevice] systemVersion] floatValue];
         if (iOSVersion >= 8.0) {
@@ -97,6 +98,7 @@
     }
     
     [_locationManager startMonitoringForRegion:beaconRegion];
+    [_locationManager startRangingBeaconsInRegion:beaconRegion];
     beaconRegion.isMonitoring = YES;
     [self addBRMRegion:beaconRegion];
     
@@ -176,6 +178,7 @@
             }
             brmBeaconRegion.isMonitoring = YES;
             brmBeaconRegion.notifyEntryStateOnDisplay = YES;
+
             [_monitoringBeaconRegions addObject:brmBeaconRegion];
         }
         else if ([region isKindOfClass:[CLCircularRegion class]]) {
@@ -238,7 +241,7 @@
     if (![region isKindOfClass:[CLBeaconRegion class]]) {
         return nil;
     }
-    
+    [self initMonitoringRegions];
     CLBeaconRegion *beaconRegion = (CLBeaconRegion *)region;
     for (CLRegion *monitoringRegion in _monitoringBeaconRegions) {
         if ([self isEqualBeaconRegion:beaconRegion targetRegion:monitoringRegion]) {

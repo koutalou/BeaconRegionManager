@@ -61,6 +61,9 @@
 - (void)didRangeBeacons:(NSArray *)beacons identifier:(NSString *)identifier;
 - (void)didUpdateRegionEnter:(NSString *)identifier;
 - (void)didUpdateRegionExit:(NSString *)identifier;
+//LEI:pass the region object
+- (void)didEnterRegion:(BRMBeaconRegion *)region;
+- (void)didExitRegion:(BRMBeaconRegion *)region;
 @end
 
 @protocol IBRMRegionLocationDelegate <NSObject>

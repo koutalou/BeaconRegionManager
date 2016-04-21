@@ -37,6 +37,9 @@
 - (void)didRangeBeacons:(NSArray *)beacons identifier:(NSString *)identifier;
 - (void)didUpdateRegionEnter:(NSString *)identifier;
 - (void)didUpdateRegionExit:(NSString *)identifier;
+//LEI:pass region entered and exited
+- (void)didEnterRegion:(BRMBeaconRegion *)region;
+- (void)didExitRegion:(BRMBeaconRegion *)region;
 @end
 
 /**
