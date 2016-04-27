@@ -64,10 +64,10 @@
         
         self.allowRanging = YES;
         _regions = [@[] mutableCopy];
-
+        
         [_locationManager startUpdatingLocation];
         [self initMonitoringRegions];
-
+        
         
         float iOSVersion = [[[UIDevice currentDevice] systemVersion] floatValue];
         if (iOSVersion >= 8.0) {
@@ -96,7 +96,7 @@
     if (![self isMonitoringCapable]) {
         return;
     }
-    [_locationManager startRangingBeaconsInRegion:beaconRegion];
+    //[_locationManager startRangingBeaconsInRegion:beaconRegion];
     [_locationManager startMonitoringForRegion:beaconRegion];
     beaconRegion.isMonitoring = YES;
     [self addBRMRegion:beaconRegion];
@@ -122,7 +122,7 @@
     if (![self isMonitoringCapable]) {
         return;
     }
-
+    
     [_locationManager startMonitoringForRegion:circularRegion];
     circularRegion.isMonitoring = YES;
     [self addBRMRegion:circularRegion];
@@ -138,7 +138,7 @@
 {
     if ([self isMonitoringBeaconRegion:region]) {
         [_locationManager stopMonitoringForRegion:region];
-
+        
         BRMBeaconRegion *beaconRegion = [self getMonitoringBeaconRegion:region];
         [_monitoringBeaconRegions removeObject:beaconRegion];
         
@@ -148,7 +148,7 @@
     }
     if ([self isMonitoringLocationRegion:region]) {
         [_locationManager stopMonitoringForRegion:region];
-
+        
         BRMLocationRegion *locationRegion = [self getMonitoringLocationRegion:region];
         [_monitoringBeaconRegions removeObject:locationRegion];
         
@@ -161,7 +161,7 @@
 - (void)initMonitoringRegions
 {
     _monitoringBeaconRegions = [@[] mutableCopy];
-
+    
     for (CLRegion *region in _locationManager.monitoredRegions) {
         if ([region isKindOfClass:[CLBeaconRegion class]]) {
             CLBeaconRegion *beaconRegion = (CLBeaconRegion *)region;
@@ -179,7 +179,7 @@
             brmBeaconRegion.notifyEntryStateOnDisplay = YES;
             brmBeaconRegion.notifyOnEntry = YES;
             brmBeaconRegion.notifyOnExit = YES;
-
+            
             [_monitoringBeaconRegions addObject:brmBeaconRegion];
             
         }
@@ -250,7 +250,7 @@
             return (BRMBeaconRegion *)monitoringRegion;
         }
     }
-
+    
     return nil;
 }
 
@@ -277,7 +277,7 @@
             return monitorRegion;
         }
     }
-
+    
     return nil;
 }
 
@@ -361,7 +361,7 @@
     else if ([self isMonitoringLocationRegion:region]) {
         BRMLocationRegion *locationRegion = [self getMonitoringLocationRegion:region];
         locationRegion.entered = YES;
-
+        
         if ([self.locationReceviceDelegate respondsToSelector:@selector(didUpdateRegionEnter:)]) {
             [self.locationReceviceDelegate didUpdateRegionEnter:region.identifier];
         }
@@ -375,9 +375,9 @@
     if ([self isMonitoringBeaconRegion:region]) {
         BRMBeaconRegion *beaconRegion = [self getMonitoringBeaconRegion:region];
         beaconRegion.entered = NO;
-        //beaconRegion.beacons = nil;
+        beaconRegion.beacons = nil;
         
-        //[_locationManager stopRangingBeaconsInRegion:(CLBeaconRegion *)region];
+        [_locationManager stopRangingBeaconsInRegion:(CLBeaconRegion *)region];
         if ([self.beaconReceviceDelegate respondsToSelector:@selector(didUpdateRegionExit:)]) {
             [self.beaconReceviceDelegate didUpdateRegionExit:region.identifier];
         }
@@ -388,7 +388,7 @@
     else if ([self isMonitoringLocationRegion:region]) {
         BRMLocationRegion *locationRegion = [self getMonitoringLocationRegion:region];
         locationRegion.entered = NO;
-
+        
         if ([self.locationReceviceDelegate respondsToSelector:@selector(didUpdateRegionExit:)]) {
             [self.locationReceviceDelegate didUpdateRegionExit:region.identifier];
         }
@@ -466,17 +466,11 @@
 - (void)locationManager:(CLLocationManager *)manager didStartMonitoringForRegion:(CLRegion *)region
 {
     BRMDLog(@"Identifier %@", region.identifier);
-    if (_allowRanging) {
-        [_locationManager startRangingBeaconsInRegion:(CLBeaconRegion *)region];
-    }
     [self.locationManager requestStateForRegion:region];
 }
 
 - (void)locationManager:(CLLocationManager *)manager didEnterRegion:(CLRegion *)region
 {
-    if (_allowRanging) {
-        [_locationManager startRangingBeaconsInRegion:(CLBeaconRegion *)region];
-    }
     [self enterRegion:region];
 }
 
@@ -540,6 +534,9 @@
     
     if ([self.beaconReceviceDelegate respondsToSelector:@selector(didRangeBeacons:identifier:)]) {
         [self.beaconReceviceDelegate didRangeBeacons:beacons identifier:identifier];
+    }
+    if (beacons.count > 0) {
+        [_locationManager stopRangingBeaconsInRegion:region];
     }
 }
 
