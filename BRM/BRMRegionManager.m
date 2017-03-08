@@ -322,14 +322,14 @@
 - (void)checkMonitoringRegion
 {
     if ([self isMonitoringCapable]) {
-        for (CLRegion *region in _regions) {
+        NSArray *regions = [NSArray arrayWithArray:_regions];
+        for (CLRegion *region in regions) {
             if ([region isKindOfClass:[BRMBeaconRegion class]]) {
                 BRMBeaconRegion *beaconRegion = (BRMBeaconRegion *)region;
                 if (beaconRegion && !beaconRegion.isMonitoring) {
                     [self startBeaconRegionMonitoring:beaconRegion];
                 }
-            }
-            if ([region isKindOfClass:[BRMLocationRegion class]]) {
+            } else if ([region isKindOfClass:[BRMLocationRegion class]]) {
                 BRMLocationRegion *locationRegion = (BRMLocationRegion *)region;
                 if (locationRegion && !locationRegion.isMonitoring) {
                     [self startLocationRegionMonitoring:locationRegion];
