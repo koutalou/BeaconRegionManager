@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "BeaconRegionManager"
-  s.version      = "0.9.1.2"
+  s.version      = "0.9.1.3"
   s.summary      = "Eddystone and iBeacon(region monitoring, ranging) library for iOS"
   s.homepage     = "https://github.com/koutalou/BeaconRegionManager"
   s.license      = "MIT"
