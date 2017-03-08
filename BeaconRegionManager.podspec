@@ -7,7 +7,7 @@ Pod::Spec.new do |s|
   s.author       = { "koutalou" => "k.koutalou@gmail.com" }
   s.platform     = :ios
   s.ios.deployment_target = "7.0"
-  s.source       = { :git => "https://github.com/leimon/BeaconRegionManager.git", :tag => "0.9.1.2" }
+  s.source       = { :git => "https://github.com/leimon/BeaconRegionManager.git", :tag => "0.9.1.3" }
   s.requires_arc = true
   s.source_files = "BRM", "BRM/*.{h,m}"
   s.public_header_files = "BRM/*.h"
