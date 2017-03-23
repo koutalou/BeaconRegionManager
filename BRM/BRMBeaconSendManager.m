@@ -61,6 +61,7 @@
     NSUUID *proxymityUUID = [[NSUUID alloc] initWithUUIDString:uuid];
     _beaconSendRegion = [[CLBeaconRegion alloc] initWithProximityUUID:proxymityUUID major:major minor:minor identifier:identifier];
     [_beaconSendRegion peripheralDataWithMeasuredPower:nil];
+    _beaconSendRegion.notifyEntryStateOnDisplay = YES;
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(second * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [self stopBeacon];

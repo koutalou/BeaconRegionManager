@@ -149,4 +149,17 @@
     }
 }
 
+- (void)didEnterRegion:(BRMBeaconRegion *)region{
+    if ([_delegate respondsToSelector:@selector(didEnterRegion:)]) {
+        [_delegate didEnterRegion:region];
+    }
+}
+
+- (void)didExitRegion:(BRMBeaconRegion *)region{
+    if ([_delegate respondsToSelector:@selector(didExitRegion:)]) {
+        [_delegate didExitRegion:region];
+    }
+}
+
+
 @end
